@@ -4,6 +4,7 @@
   "description": "node server running on a raspberry PI 4",
   "main": "src/index.ts",
   "scripts": {
+    "clean": "rm -rf ./node_modules & rm -rf ./dist",
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
     "prestart": "npm run build",
