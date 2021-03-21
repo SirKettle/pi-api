@@ -21,7 +21,9 @@ app.get('/', (req, res) => {
   `);
 });
 app.get('/ipv4', ipAddress.getPublicV4);
-app.get('/tweets/:userId', twitter.getUserTweets);
+app.get('/twitter/legacy-tweets/:userId', twitter.getUserTweetsLegacy);
+app.get('/twitter/tweets/:userId', twitter.getUserTweets);
+// app.get('/twitter/images/:userId', twitter.getUserImages);
 
 // export our app
 export default app;
