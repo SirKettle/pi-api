@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import TwitterClient from 'twitter';
 import { last } from 'ramda';
-import { IRawTweet, ILegacyTweet, IDecoratedTweet } from './types';
+import type { IRawTweet, ILegacyTweet, IDecoratedTweet } from './types';
 import { intOr } from '../utils/number';
 import { getHashTags, getTweetImages } from './utils';
 
@@ -25,7 +25,7 @@ export const init = () => {
  */
 export const getUserTweetsLegacy = (req: Request, res: Response) => {
   const requestParams = {
-    screen_name: req.params.userId,
+    screen_name: req.params.userId || req.query.user || 'thirkettle',
     count: intOr(req.query.count, 30),
   };
 
