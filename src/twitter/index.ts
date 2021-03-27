@@ -41,7 +41,6 @@ export const getUserTweetsLegacy = (req: Request, res: Response) => {
         )
       );
     } else {
-      console.log(error);
       res.status(401);
       res.send({
         error,
@@ -95,7 +94,6 @@ export const getUserTweets = (req: Request, res: Response) => {
         data,
       });
     } else {
-      console.log(error);
       res.status(401);
       res.send({
         error,

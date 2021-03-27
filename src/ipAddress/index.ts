@@ -3,7 +3,6 @@ import { v4 } from 'public-ip';
 
 export const getPublicIpV4 = async () => {
   const ipv4 = await v4();
-  console.log(ipv4);
   return ipv4;
 };
 
