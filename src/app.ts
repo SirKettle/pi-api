@@ -1,10 +1,13 @@
-import express from 'express';
 import DotEnv from 'dotenv';
+import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import helmet from 'helmet';
 import * as events from './events';
 import * as ipAddress from './ipAddress';
 import * as twitter from './twitter';
 import { isOriginAllowed } from './utils/cors';
+import { getRandomPie } from './random';
 
 // dotenv variables now available
 DotEnv.config();
@@ -25,7 +28,13 @@ app.use(
   })
 );
 
-app.set('port', process.env.PORT || 3001);
+app.use(helmet());
+
+app.use(express.static(path.join(__dirname, '../static')));
+
+app.set('port', process.env.PORT || 80);
+
+export const linkHtml = (text: string, link?: string) => `<a href="${link || text}">${text}</a>`;
 
 // API Endpoints
 app.get('/', (req, res) => {
@@ -37,21 +46,30 @@ app.get('/', (req, res) => {
       <body>
         <h1>Available endpoints</h1>
         <ul>
-          <li>GET /ipv4</li>
-          <li>GET /twitter/tweets/:userId</li>
-          <li>GET /twitter/legacy-tweets/:userId</li>
-          <li>GET /twitter/legacy-tweets (requires a ?user=query)</li>
+          <li>GET ${linkHtml('/pie')} (returns a random, but always delicious, pie)</li>
+          <li>GET ${linkHtml('/ipv4')}</li>
+          <li>GET ${linkHtml('/twitter/tweets/:userId', '/twitter/tweets/thirkettle?count=5')}</li>
+          <li>GET ${linkHtml('/twitter/legacy-tweets/:userId', '/twitter/legacy-tweets/thirkettle?count=5')}</li>
+          <li>GET ${linkHtml(
+            '/twitter/legacy-tweets',
+            '/twitter/legacy-tweets?user=thirkettle&count=5'
+          )} (requires a ?user=query)</li>
+          <li>GET ${linkHtml('/events/:appId', '/events/loisthirkettle')}</li>
+          <li>GET ${linkHtml('/events/:appId/:eventId', '/events/loisthirkettle/designermakers21')}</li>
         </ul>
       </body>
     </html>
   `);
 });
 app.get('/ipv4', ipAddress.getPublicV4);
+app.get('/twitter/tweets/:userId', twitter.getUserTweets);
 app.get('/twitter/legacy-tweets/:userId', twitter.getUserTweetsLegacy);
 app.get('/twitter/legacy-tweets', twitter.getUserTweetsLegacy);
-app.get('/twitter/tweets/:userId', twitter.getUserTweets);
 app.get('/events/:appId', events.getAppEvents);
 app.get('/events/:appId/:eventId', events.getAppEvent);
+app.get('/pie', (_req, res) => {
+  res.send(getRandomPie());
+});
 
 // http://api.thekettlestudio.co.uk/api/json.php/events
 // http://api.thekettlestudio.co.uk/api/json.php/events/designermakers21

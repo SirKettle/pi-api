@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'pi-api',
+      name: 'pi-kettle',
       script: './dist/index.js',
       env: {
         NODE_ENV: 'development',

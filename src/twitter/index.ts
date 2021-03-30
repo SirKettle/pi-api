@@ -27,6 +27,8 @@ export const getUserTweetsLegacy = (req: Request, res: Response) => {
   const requestParams = {
     screen_name: req.params.userId || req.query.user || 'thirkettle',
     count: intOr(req.query.count, 30),
+    exclude_replies: true,
+    include_rts: req.query.retweets ? true : false,
   };
 
   twitterClient.get('statuses/user_timeline', requestParams, function (error, tweets, _response) {
@@ -55,6 +57,8 @@ export const getUserTweets = (req: Request, res: Response) => {
   const requestParams = {
     screen_name: req.params.userId,
     count: tweetCount,
+    exclude_replies: true,
+    include_rts: req.query.retweets ? true : false,
     tweet_mode: 'extended', // this returns the full_text prop - not text
   };
 
@@ -63,7 +67,7 @@ export const getUserTweets = (req: Request, res: Response) => {
       const data = tweets
         .map((t: IRawTweet): IDecoratedTweet | undefined => {
           const tweetText = t.full_text || t.text;
-          const textParts = (tweetText || '').split(' ');
+          const textParts = (tweetText || '').replace(/(\r\n|\n|\r|↵)/g, ' ').split(' ');
           if (textParts.length > 0) {
             const maybeUrl = last(textParts);
             let url = null;
